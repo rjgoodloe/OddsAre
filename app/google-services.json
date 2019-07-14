@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "441810381642",
+    "firebase_url": "https://oddsare-b52d1.firebaseio.com",
+    "project_id": "oddsare-b52d1",
+    "storage_bucket": "oddsare-b52d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441810381642:android:2cd65800c3d4c031",
+        "android_client_info": {
+          "package_name": "com.android.oddsare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441810381642-m1jnub20462mdhm1mhngvrubdl8i4fca.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.oddsare",
+            "certificate_hash": "820f1c2570d8acb1acdfe33732f0dff02fc02f53"
+          }
+        },
+        {
+          "client_id": "441810381642-2r1rsphtkppu1pm04qc70gmgbvigu91f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe0Evwz88TvW2UXPNL8SZ30Prq2WcNV34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441810381642-2r1rsphtkppu1pm04qc70gmgbvigu91f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
