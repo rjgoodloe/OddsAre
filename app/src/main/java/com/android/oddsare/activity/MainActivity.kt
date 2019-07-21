@@ -1,9 +1,11 @@
 package com.android.oddsare.activity
 
 import android.app.SearchManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -14,32 +16,20 @@ import com.android.oddsare.fragment.HomeFragment
 import com.android.oddsare.fragment.NewOddsFragment
 import com.android.oddsare.fragment.NotificationsFragment
 import com.android.oddsare.fragment.ProfileFragment
+import com.android.oddsare.model.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
-import android.content.ComponentName
+import com.google.firebase.database.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
     private val fm = this.supportFragmentManager
 
-    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        var selectedFragment: Fragment = HomeFragment(this)
-        when (item.itemId) {
-            R.id.navigation_home -> selectedFragment = HomeFragment(this)
-            R.id.navigation_new_odds -> selectedFragment = NewOddsFragment(this)
-            R.id.navigation_notifications -> selectedFragment = NotificationsFragment(this)
-            R.id.navigation_profile -> selectedFragment = ProfileFragment(this)
-        }
-        fm.beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.frag_placeholder, selectedFragment)
-            .commit()
-        return@OnNavigationItemSelectedListener true
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +37,31 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        database = FirebaseDatabase.getInstance().reference
+
 
         fm.beginTransaction()
             .addToBackStack(null)
-            .replace(R.id.frag_placeholder, HomeFragment(this))
+            .replace(R.id.frag_placeholder, HomeFragment())
             .commit()
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+    }
+
+    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        var selectedFragment: Fragment = HomeFragment()
+        when (item.itemId) {
+            R.id.navigation_home -> selectedFragment = HomeFragment()
+            R.id.navigation_new_odds -> selectedFragment = NewOddsFragment()
+            R.id.navigation_notifications -> selectedFragment = NotificationsFragment()
+            R.id.navigation_profile -> selectedFragment = ProfileFragment()
+        }
+        fm.beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.frag_placeholder, selectedFragment)
+            .commit()
+        return@OnNavigationItemSelectedListener true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -72,22 +79,8 @@ class MainActivity : AppCompatActivity() {
                 )
             )
         )
-        //searchView.setQueryHint(resources.getString(R.string.search_hint))
         return true
-
-//        searchView.setOnQueryTextListener()
-//        // Get the SearchView and set the searchable configuration
-//        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//        (menu.findItem(R.id.action_search).actionView as SearchView).apply {
-//            // Assumes current activity is the searchable activity
-//            setSearchableInfo(searchManager.getSearchableInfo(componentName))
-//            setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
-//            isQueryRefinementEnabled
-//            isSubmitButtonEnabled
-
     }
-
-
 
     override fun onSearchRequested(): Boolean {
         startSearch(null, false, null, false)
@@ -95,16 +88,50 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
-        R.id.menu_sign_out -> {
-            auth.signOut()
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        when (item.itemId) {
+            R.id.menu_sign_out -> {
+                auth.signOut()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
 
+        }
+        return super.onOptionsItemSelected(item)
     }
-    return super.onOptionsItemSelected(item)
-}
+
+    private fun requestListener() {
+        database.child("Users").child(auth.currentUser!!.email!!).child("Requests")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    // Get Post object and use the values to update the UI
+
+                    try {
+                        val requests = dataSnapshot.value as HashMap<*, *>
+                        var value: String
+                        for (key in requests.keys) {
+                            value = requests[key] as String
+
+                        }
+
+
+                    } catch (t: Throwable) {
+
+                    }
+                    val userInfo = dataSnapshot.getValue(User::class.java)
+                    userInfo!!.getRequests()
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
+                    // ...
+                }
+            })
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
+    }
 }
 

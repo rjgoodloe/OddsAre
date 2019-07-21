@@ -38,8 +38,8 @@
                        android:resource="@xml/searchable"/>
         </activity>
 
-        <provider android:name="provider.RecentSearchProvider"
-                  android:authorities="com.android.oddsare.provider.RecentSearchProvider" />
+        <provider android:name=".provider.RecentSearchProvider"
+                  android:authorities="com.android.oddsare.com.android.oddsare.provider.RecentSearchProvider"/>
 
 
     </application>

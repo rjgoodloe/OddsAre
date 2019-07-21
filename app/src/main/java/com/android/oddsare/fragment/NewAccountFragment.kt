@@ -1,6 +1,5 @@
 package com.android.oddsare.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,9 +11,8 @@ import com.android.oddsare.R
 import kotlinx.android.synthetic.main.fragment_new_account.*
 import kotlinx.android.synthetic.main.fragment_new_account.view.*
 
-class NewAccountFragment(context: Context) : Fragment(), View.OnClickListener {
+class NewAccountFragment : Fragment(), View.OnClickListener {
 
-    private val parentContext = context
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -33,7 +31,7 @@ class NewAccountFragment(context: Context) : Fragment(), View.OnClickListener {
                     val fragmentManager = (context as FragmentActivity).supportFragmentManager
                     fragmentManager.beginTransaction()
                         .addToBackStack(null)
-                        .replace(R.id.login_frag_placeholder, CreateWithEmailFragment(parentContext))
+                        .replace(R.id.login_frag_placeholder, CreateWithEmailFragment())
                         .commit()
 
                 } catch (e: ClassCastException) {

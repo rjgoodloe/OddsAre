@@ -14,17 +14,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.android.oddsare.R
 import com.android.oddsare.activity.MainActivity
+import com.android.oddsare.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.fragment_create_with_email.*
 import kotlinx.android.synthetic.main.fragment_create_with_email.view.*
-import model.User
 
 
-class CreateWithEmailFragment(context: Context) : Fragment() {
+class CreateWithEmailFragment() : Fragment() {
 
-    private val parentContext = context
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
@@ -58,17 +57,24 @@ class CreateWithEmailFragment(context: Context) : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val newUser = User(et_name.text.toString(),et_username.text.toString(), et_email.text.toString())
-                    writeNewUser(auth.currentUser!!.uid, newUser)
+                    val newUser = User(
+                        et_name.text.toString(),
+                        et_username.text.toString(),
+                        et_email.text.toString(),
+                        ArrayList(),
+                        ArrayList()
+                    )
+                    writeNewUser(newUser)
 
-                    val intent = Intent(parentContext, MainActivity::class.java)
+                    val intent = Intent(activity as Context, MainActivity::class.java)
                     startActivity(intent)
-                    (parentContext as Activity).finish()
+                    //(parentContext as Activity).finish()
 
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(parentContext, "Authentication failed.",
+                    Toast.makeText(
+                        activity as Context, "Authentication failed.",
                         Toast.LENGTH_SHORT).show()
                 }
 
@@ -79,8 +85,8 @@ class CreateWithEmailFragment(context: Context) : Fragment() {
         // [END create_user_with_email]
     }
 
-    private fun writeNewUser(userId : String, user : User) {
-        database.child("users").child(userId).setValue(user)
+    private fun writeNewUser(user: User) {
+        database.child("Users").child(splitString(et_email.text.toString())).setValue(user)
     }
 
     private fun validateForm(): Boolean {
@@ -117,6 +123,11 @@ class CreateWithEmailFragment(context: Context) : Fragment() {
         }
 
         return valid
+    }
+
+    private fun splitString(str: String): String {
+        val split = str.split("@")
+        return split[0]
     }
 
 }

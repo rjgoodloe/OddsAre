@@ -10,27 +10,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.android.oddsare.R
 import com.android.oddsare.activity.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_sign_in.*
-import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.fragment_sign_in.view.*
 
 
-
-
-class SignInFragment(context: Context) : Fragment(), View.OnClickListener {
+class SignInFragment : Fragment(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
-    private val parentContext = context
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
 
-        val view : View = inflater.inflate(R.layout.fragment_sign_in, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_sign_in, container, false)
 
         view.b_sign_in.setOnClickListener(this)
         view.b_no_account.setOnClickListener(this)
@@ -46,7 +43,7 @@ class SignInFragment(context: Context) : Fragment(), View.OnClickListener {
         val currentUser = auth.currentUser
 
         if (currentUser != null) {
-            val intent = Intent(parentContext, MainActivity::class.java)
+            val intent = Intent(activity as Context, MainActivity::class.java)
             startActivity(intent)
         }
     }
@@ -67,7 +64,7 @@ class SignInFragment(context: Context) : Fragment(), View.OnClickListener {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
-                    val intent = Intent(parentContext, MainActivity::class.java)
+                    val intent = Intent(activity as Context, MainActivity::class.java)
                     startActivity(intent)
                     activity!!.finish()
                 } else {
@@ -121,7 +118,7 @@ class SignInFragment(context: Context) : Fragment(), View.OnClickListener {
                     val fragmentManager = (context as FragmentActivity).supportFragmentManager
                     fragmentManager.beginTransaction()
                         .addToBackStack(null)
-                        .replace(R.id.login_frag_placeholder, NewAccountFragment(parentContext))
+                        .replace(R.id.login_frag_placeholder, NewAccountFragment())
                         .commit()
 
                 } catch (e: ClassCastException) {
@@ -133,11 +130,9 @@ class SignInFragment(context: Context) : Fragment(), View.OnClickListener {
         }
     }
 
-    fun onBackPressed() {
-    }
-
 
     companion object {
-        private const val TAG = "SignInFragment"
+        const val TAG = "SignInFragment"
     }
+
 }
