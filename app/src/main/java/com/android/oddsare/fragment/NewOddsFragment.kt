@@ -46,12 +46,11 @@ class NewOddsFragment : Fragment(), OnClickListener {
         Log.d(TAG, "SEND REQUEST")
 
         try {
-            var friendEmail = "" //database.child("Emails").child(splitString(auth.currentUser!!.email!!)
             database.child("Emails").child(username).addValueEventListener(object :
                 ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    friendEmail = dataSnapshot.value as String
+                    var friendEmail = dataSnapshot.value as String
                     friendEmail = splitString(friendEmail)
                     database.child("Users").child(friendEmail).child("Requests").push()
                         .setValue(splitString(auth.currentUser!!.email!!))

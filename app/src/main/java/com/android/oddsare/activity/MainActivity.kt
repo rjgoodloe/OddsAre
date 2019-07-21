@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -16,7 +17,7 @@ import com.android.oddsare.fragment.HomeFragment
 import com.android.oddsare.fragment.NewOddsFragment
 import com.android.oddsare.fragment.NotificationsFragment
 import com.android.oddsare.fragment.ProfileFragment
-import com.android.oddsare.model.User
+import com.android.oddsare.generic.Notifications
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
@@ -44,6 +45,8 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(null)
             .replace(R.id.frag_placeholder, HomeFragment())
             .commit()
+
+        requestListener()
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -100,26 +103,34 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    var number = 0
     private fun requestListener() {
-        database.child("Users").child(auth.currentUser!!.email!!).child("Requests")
+        database.child("Users").child(splitString(auth.currentUser!!.email!!)).child("Requests")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    // Get Post object and use the values to update the UI
 
                     try {
                         val requests = dataSnapshot.value as HashMap<*, *>
                         var value: String
                         for (key in requests.keys) {
                             value = requests[key] as String
+                            Toast.makeText(
+                                this@MainActivity, value,
+                                Toast.LENGTH_SHORT
+                            ).show()
 
+                            val notifyUser = Notifications()
+                            Log.d(TAG, "HERE")
+                            notifyUser.notify(applicationContext, "sent by $value", number)
+                            number++
                         }
 
 
                     } catch (t: Throwable) {
 
                     }
-                    val userInfo = dataSnapshot.getValue(User::class.java)
-                    userInfo!!.getRequests()
+//                    val userInfo = dataSnapshot.getValue(User::class.java)
+//                    userInfo!!.getRequests()
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -128,6 +139,11 @@ class MainActivity : AppCompatActivity() {
                     // ...
                 }
             })
+    }
+
+    private fun splitString(str: String): String {
+        val split = str.split("@")
+        return split[0]
     }
 
     companion object {

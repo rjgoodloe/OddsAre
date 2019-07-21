@@ -17,7 +17,7 @@ class NewAccountFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val view : View = inflater.inflate(R.layout.fragment_new_account, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_new_account, container, false)
         view.b_sign_up_email.setOnClickListener(this)
 
         return view
@@ -37,7 +37,6 @@ class NewAccountFragment : Fragment(), View.OnClickListener {
                 } catch (e: ClassCastException) {
                     Log.e(TAG, "Can't get fragment manager")
                 }
-
 
 
             }

@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_create_with_email.*
 import kotlinx.android.synthetic.main.fragment_create_with_email.view.*
 
 
-class CreateWithEmailFragment() : Fragment() {
+class CreateWithEmailFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
@@ -75,7 +75,8 @@ class CreateWithEmailFragment() : Fragment() {
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
                     Toast.makeText(
                         activity as Context, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 // [START_EXCLUDE]
