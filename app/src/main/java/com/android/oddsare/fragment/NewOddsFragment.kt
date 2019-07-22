@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.android.oddsare.R
+import com.android.oddsare.model.OddsChallenge
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_new_odds.*
@@ -36,12 +37,12 @@ class NewOddsFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             b_send_odds -> {
-                sendRequest(et_email_temp.text.toString())
+                sendRequest(et_friend_username.text.toString(), et_odds_challenge.text.toString())
             }
         }
     }
 
-    private fun sendRequest(username: String) {
+    private fun sendRequest(username: String, oddsChallenge: String) {
 
         Log.d(TAG, "SEND REQUEST")
 
@@ -54,8 +55,8 @@ class NewOddsFragment : Fragment(), OnClickListener {
                     friendEmail = splitString(friendEmail)
                     database.child("Users").child(friendEmail).child("Requests").push()
                         .setValue(splitString(auth.currentUser!!.email!!))
-
-
+                    val newOdds = OddsChallenge(splitString(auth.currentUser!!.email!!), oddsChallenge, 0, 0, 0)
+                    database.child("Odds").child(friendEmail).push().setValue(newOdds)
                 }
 
                 override fun onCancelled(p0: DatabaseError) {

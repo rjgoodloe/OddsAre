@@ -1,5 +1,6 @@
 package com.android.oddsare.activity
 
+import android.app.ActivityManager
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
@@ -8,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -114,15 +114,15 @@ class MainActivity : AppCompatActivity() {
                         var value: String
                         for (key in requests.keys) {
                             value = requests[key] as String
-                            Toast.makeText(
-                                this@MainActivity, value,
-                                Toast.LENGTH_SHORT
-                            ).show()
 
-                            val notifyUser = Notifications()
-                            Log.d(TAG, "HERE")
-                            notifyUser.notify(applicationContext, "sent by $value", number)
-                            number++
+                            if (isAppRunning(applicationContext, "com.android.oddsare")) {
+                                val notifyUser = Notifications()
+                                Log.d(TAG, "HERE")
+                                notifyUser.notify(applicationContext, "sent by $value", number)
+                                number++
+                                break
+                            }
+
                         }
 
 
@@ -139,6 +139,20 @@ class MainActivity : AppCompatActivity() {
                     // ...
                 }
             })
+    }
+
+    fun isAppRunning(context: Context, packageName: String): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val processInfo = activityManager.runningAppProcesses
+        if (processInfo != null) {
+            for (info in processInfo) {
+                Log.d("unique", info.processName)
+                if (info.processName == packageName) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     private fun splitString(str: String): String {
